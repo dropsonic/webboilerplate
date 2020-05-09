@@ -1,7 +1,7 @@
 // https://css-tricks.com/gulp-for-beginners/
 
 import { src, dest, series, parallel, watch as fwatch } from 'gulp';
-import transpilets from 'gulp-typescript';
+import tstranspiler from 'gulp-typescript';
 import transpilesass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
@@ -9,7 +9,7 @@ import uglify from 'gulp-uglify';
 import bsync from 'browser-sync';
 import del from 'del';
 
-const tsProject = transpilets.createProject('tsconfig.json');
+const tsProject = tstranspiler.createProject('tsconfig.json');
 const browser = bsync.create();
 
 function html() {
