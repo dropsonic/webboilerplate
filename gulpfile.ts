@@ -3,7 +3,9 @@
 import * as gulp from 'gulp';
 import gulpts from 'gulp-typescript';
 import gulpsass from 'gulp-sass';
-import sourcemaps from 'gulp-sourcemaps';
+import gulpsourcemaps from 'gulp-sourcemaps';
+import gulprename from 'gulp-rename';
+import gulpuglify from 'gulp-uglify';
 import bsync from 'browser-sync';
 import del from 'del';
 
@@ -19,9 +21,9 @@ function html() {
 function sass() {
 	// prettier-ignore
 	return gulp.src('src/**/*.scss')
-		.pipe(sourcemaps.init())
+		.pipe(gulpsourcemaps.init())
 		.pipe(gulpsass())
-		.pipe(sourcemaps.write('.'))
+		.pipe(gulpsourcemaps.write('.'))
 		.pipe(gulp.dest('dist/css'))
 		.pipe(browser.stream({ match: '**/*.css' }));
 }
@@ -29,10 +31,12 @@ function sass() {
 function ts() {
 	// prettier-ignore
 	return tsProject.src()
-		.pipe(sourcemaps.init())
+		.pipe(gulpsourcemaps.init())
 		.pipe(tsProject())
 		.js
-		.pipe(sourcemaps.write('.'))
+		.pipe(gulpuglify())
+		.pipe(gulprename({ extname: '.min.js' }))
+		.pipe(gulpsourcemaps.write('.'))
 		.pipe(gulp.dest('dist/js'))
 		.pipe(browser.stream({ match: '**/*.js' }));
 }
