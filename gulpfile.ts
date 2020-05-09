@@ -10,7 +10,13 @@ import del from 'del';
 const tsProject = gulpts.createProject('tsconfig.json');
 const browser = bsync.create();
 
-export function sass() {
+function html() {
+	// prettier-ignore
+	return gulp.src('src/*.html')
+		.pipe(gulp.dest('dist'));
+}
+
+function sass() {
 	// prettier-ignore
 	return gulp.src('src/**/*.scss')
 		.pipe(sourcemaps.init())
@@ -20,7 +26,7 @@ export function sass() {
 		.pipe(browser.stream({ match: '**/*.css' }));
 }
 
-export function ts() {
+function ts() {
 	// prettier-ignore
 	return tsProject.src()
 		.pipe(sourcemaps.init())
@@ -31,7 +37,14 @@ export function ts() {
 		.pipe(browser.stream({ match: '**/*.js' }));
 }
 
-export function browserSync() {
+function clean(done: () => void) {
+	del.sync('dist');
+	done();
+}
+
+const build = gulp.parallel(clean, ts, sass, html);
+
+function browserSync() {
 	bsync.init({
 		server: {
 			baseDir: 'dist'
@@ -45,19 +58,6 @@ function browserSyncReload(done: () => void) {
 	done();
 }
 
-export function clean(done: () => void) {
-	del.sync('dist');
-	done();
-}
-
-export function html() {
-	// prettier-ignore
-	return gulp.src('src/*.html')
-		.pipe(gulp.dest('dist'));
-}
-
-export const build = gulp.parallel(clean, ts, sass, html);
-
 function watchImpl(done: () => void) {
 	gulp.watch('src/**/*.ts', ts);
 	gulp.watch('src/**/*.scss', sass);
@@ -66,4 +66,7 @@ function watchImpl(done: () => void) {
 	done();
 }
 
-export const watch = gulp.series(build, watchImpl, browserSync);
+const watch = gulp.series(build, watchImpl, browserSync);
+
+export { html, sass, ts, clean, build, watch };
+export default watch;
