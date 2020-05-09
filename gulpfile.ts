@@ -37,7 +37,7 @@ function ts() {
 		.pipe(browser.stream({ match: '**/*.js' }));
 }
 
-function clean(done: () => void) {
+function clean(done: (err?: Error) => void) {
 	del.sync('dist');
 	done();
 }
@@ -53,12 +53,12 @@ function browserSync() {
 	});
 }
 
-function browserSyncReload(done: () => void) {
+function browserSyncReload(done: (err?: Error) => void) {
 	bsync.reload();
 	done();
 }
 
-function watchImpl(done: () => void) {
+function watchImpl(done: (err?: Error) => void) {
 	gulp.watch('src/**/*.ts', ts);
 	gulp.watch('src/**/*.scss', sass);
 	gulp.watch('src/*.html', html);
