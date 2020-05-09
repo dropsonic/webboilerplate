@@ -46,7 +46,7 @@ function clean(done: (err?: Error) => void) {
 	done();
 }
 
-const build = parallel(clean, ts, sass, html);
+const build = series(clean, parallel(html, ts, sass));
 
 function browserSync() {
 	bsync.init({
