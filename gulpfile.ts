@@ -1,43 +1,43 @@
 // https://css-tricks.com/gulp-for-beginners/
 
-import * as gulp from 'gulp';
-import gulpts from 'gulp-typescript';
-import gulpsass from 'gulp-sass';
-import gulpsourcemaps from 'gulp-sourcemaps';
-import gulprename from 'gulp-rename';
-import gulpuglify from 'gulp-uglify';
+import { src, dest, series, parallel, watch as fwatch } from 'gulp';
+import transpilets from 'gulp-typescript';
+import transpilesass from 'gulp-sass';
+import sourcemaps from 'gulp-sourcemaps';
+import rename from 'gulp-rename';
+import uglify from 'gulp-uglify';
 import bsync from 'browser-sync';
 import del from 'del';
 
-const tsProject = gulpts.createProject('tsconfig.json');
+const tsProject = transpilets.createProject('tsconfig.json');
 const browser = bsync.create();
 
 function html() {
 	// prettier-ignore
-	return gulp.src('src/*.html')
-		.pipe(gulp.dest('dist'));
+	return src('src/*.html')
+		.pipe(dest('dist'));
 }
 
 function sass() {
 	// prettier-ignore
-	return gulp.src('src/**/*.scss')
-		.pipe(gulpsourcemaps.init())
-		.pipe(gulpsass())
-		.pipe(gulpsourcemaps.write('.'))
-		.pipe(gulp.dest('dist/css'))
+	return src('src/**/*.scss')
+		.pipe(sourcemaps.init())
+		.pipe(transpilesass())
+		.pipe(sourcemaps.write('.'))
+		.pipe(dest('dist/css'))
 		.pipe(browser.stream({ match: '**/*.css' }));
 }
 
 function ts() {
 	// prettier-ignore
 	return tsProject.src()
-		.pipe(gulpsourcemaps.init())
+		.pipe(sourcemaps.init())
 		.pipe(tsProject())
 		.js
-		.pipe(gulpuglify())
-		.pipe(gulprename({ extname: '.min.js' }))
-		.pipe(gulpsourcemaps.write('.'))
-		.pipe(gulp.dest('dist/js'))
+		.pipe(uglify())
+		.pipe(rename({ extname: '.min.js' }))
+		.pipe(sourcemaps.write('.'))
+		.pipe(dest('dist/js'))
 		.pipe(browser.stream({ match: '**/*.js' }));
 }
 
@@ -46,7 +46,7 @@ function clean(done: (err?: Error) => void) {
 	done();
 }
 
-const build = gulp.parallel(clean, ts, sass, html);
+const build = parallel(clean, ts, sass, html);
 
 function browserSync() {
 	bsync.init({
@@ -63,14 +63,14 @@ function browserSyncReload(done: (err?: Error) => void) {
 }
 
 function watchImpl(done: (err?: Error) => void) {
-	gulp.watch('src/**/*.ts', ts);
-	gulp.watch('src/**/*.scss', sass);
-	gulp.watch('src/*.html', html);
-	gulp.watch('dist/*.html', browserSyncReload);
+	fwatch('src/**/*.ts', ts);
+	fwatch('src/**/*.scss', sass);
+	fwatch('src/*.html', html);
+	fwatch('dist/*.html', browserSyncReload);
 	done();
 }
 
-const watch = gulp.series(build, watchImpl, browserSync);
+const watch = series(build, watchImpl, browserSync);
 
 export { html, sass, ts, clean, build, watch };
 export default watch;
