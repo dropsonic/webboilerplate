@@ -1,4 +1,5 @@
-// https://css-tricks.com/gulp-for-beginners/
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import { src, dest, series, parallel, watch as fwatch } from 'gulp';
 import tstranspiler from 'gulp-typescript';
@@ -41,7 +42,7 @@ const globs = {
 };
 
 const tsProject = tstranspiler.createProject(globs.tsConfig);
-const browser = bsync.create();
+bsync.create();
 
 function html() {
 	// prettier-ignore
@@ -64,7 +65,7 @@ function sass() {
 		.pipe(sassLint.format())
 		.pipe(sassLint.failOnError())
 		.pipe(sourcemaps.init())
-		.pipe(transpilesass())
+		.pipe(transpilesass({ includePaths: require('scss-resets').includePaths }))
 		.pipe(autoprefixer())
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
