@@ -11,6 +11,7 @@ import imagemin from 'gulp-imagemin';
 import autoprefixer from 'gulp-autoprefixer';
 const cleancss = require('gulp-clean-css');
 const sassLint = require('gulp-sass-lint');
+const eslint = require('gulp-eslint');
 import plumber from 'gulp-plumber';
 import concat from 'gulp-concat';
 import bsync from 'browser-sync';
@@ -77,6 +78,9 @@ function ts() {
 	// prettier-ignore
 	return tsProject.src()
 		.pipe(plumber())
+		.pipe(eslint())
+		.pipe(eslint.format('stylish'))
+		.pipe(eslint.failAfterError())
 		.pipe(sourcemaps.init())
 		.pipe(tsProject())
 		.js
