@@ -11,6 +11,7 @@ import imagemin from 'gulp-imagemin';
 import autoprefixer from 'gulp-autoprefixer';
 const cleancss = require('gulp-clean-css');
 import plumber from 'gulp-plumber';
+import concat from 'gulp-concat';
 import bsync from 'browser-sync';
 import del from 'del';
 
@@ -61,6 +62,7 @@ function sass() {
 		.pipe(autoprefixer())
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
+		.pipe(concat('styles.min.css'))
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest(globs.dest.dirs.css))
 		.pipe(bsync.stream({ match: globs.css }));
@@ -75,6 +77,7 @@ function ts() {
 		.js
 		.pipe(uglify())
 		.pipe(rename({ extname: '.min.js' }))
+		.pipe(concat('scripts.min.js'))
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest(globs.dest.dirs.js))
 		.pipe(bsync.stream({ match: globs.js }));
