@@ -1,3 +1,5 @@
+@import 'normalize';
+
 $main-color: #ff9f43;
 $head-text-color: rgb(235, 232, 232);
 $button-text-color: #fff;
@@ -25,6 +27,8 @@ header {
 	h1 {
 		color: $head-text-color;
 		font-size: 350%;
+		font-weight: 100;
+		letter-spacing: 1px;
 		margin-bottom: 15px;
 		text-transform: uppercase;
 		word-spacing: 4px;
