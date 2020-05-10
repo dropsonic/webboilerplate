@@ -10,6 +10,7 @@ import cache from 'gulp-cache';
 import imagemin from 'gulp-imagemin';
 import autoprefixer from 'gulp-autoprefixer';
 const cleancss = require('gulp-clean-css');
+import plumber from 'gulp-plumber';
 import bsync from 'browser-sync';
 import del from 'del';
 
@@ -54,6 +55,7 @@ function images() {
 function sass() {
 	// prettier-ignore
 	return src(globs.src.sass)
+		.pipe(plumber())
 		.pipe(sourcemaps.init())
 		.pipe(transpilesass())
 		.pipe(autoprefixer())
@@ -67,6 +69,7 @@ function sass() {
 function ts() {
 	// prettier-ignore
 	return tsProject.src()
+		.pipe(plumber())
 		.pipe(sourcemaps.init())
 		.pipe(tsProject())
 		.js
