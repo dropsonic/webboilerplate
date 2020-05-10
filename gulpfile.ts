@@ -10,11 +10,19 @@ import cache from 'gulp-cache';
 import imagemin from 'gulp-imagemin';
 import bsync from 'browser-sync';
 import del from 'del';
+import slash from 'slash';
+import path from 'path';
+const joinPath = (...paths: string[]) => slash(path.join());
 
+const srcRoot = 'src';
+const destRoot = 'dest';
 const globs = {
 	src: {
-		html: 'src/*.html',
-		images: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+		dirs: {
+			root: srcRoot
+		},
+		html: joinPath(srcRoot, '*.html'),
+		images: joinPath(srcRoot, 'img/**/*.+(png|jpg|jpeg|gif|svg)'),
 		sass: 'src/scss/**/*.scss',
 		ts: 'src/ts/**/*.ts'
 	},
