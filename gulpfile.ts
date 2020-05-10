@@ -9,6 +9,7 @@ import uglify from 'gulp-uglify';
 import cache from 'gulp-cache';
 import imagemin from 'gulp-imagemin';
 import autoprefixer from 'gulp-autoprefixer';
+const cleancss = require('gulp-clean-css');
 import bsync from 'browser-sync';
 import del from 'del';
 
@@ -56,6 +57,8 @@ function sass() {
 		.pipe(sourcemaps.init())
 		.pipe(transpilesass())
 		.pipe(autoprefixer())
+		.pipe(cleancss())
+		.pipe(rename({ extname: '.min.css' }))
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest(globs.dest.dirs.css))
 		.pipe(browser.stream({ match: globs.css }));
