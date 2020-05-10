@@ -61,7 +61,7 @@ function sass() {
 		.pipe(rename({ extname: '.min.css' }))
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest(globs.dest.dirs.css))
-		.pipe(browser.stream({ match: globs.css }));
+		.pipe(bsync.stream({ match: globs.css }));
 }
 
 function ts() {
@@ -74,7 +74,7 @@ function ts() {
 		.pipe(rename({ extname: '.min.js' }))
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest(globs.dest.dirs.js))
-		.pipe(browser.stream({ match: globs.js }));
+		.pipe(bsync.stream({ match: globs.js }));
 }
 
 function clean(done: (err?: Error) => void) {
