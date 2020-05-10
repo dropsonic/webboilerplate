@@ -1,0 +1,4 @@
+rules:
+  indentation:
+    - 1
+    - size: 'tab'

@@ -35,10 +35,11 @@ const globs = {
 	},
 	css: '**/*.css',
 	js: '**/*.js',
-	tsconfig: 'tsconfig.json'
+	tsConfig: 'tsconfig.json',
+	sassLintConfig: '.sass-lint.yml'
 };
 
-const tsProject = tstranspiler.createProject(globs.tsconfig);
+const tsProject = tstranspiler.createProject(globs.tsConfig);
 const browser = bsync.create();
 
 function html() {
@@ -58,7 +59,7 @@ function sass() {
 	// prettier-ignore
 	return src(globs.src.sass)
 		.pipe(plumber())
-		.pipe(sassLint())
+		.pipe(sassLint({ configFile: globs.sassLintConfig }))
 		.pipe(sassLint.format())
 		.pipe(sassLint.failOnError())
 		.pipe(sourcemaps.init())
