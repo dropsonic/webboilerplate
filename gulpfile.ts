@@ -11,30 +11,52 @@ import imagemin from 'gulp-imagemin';
 import bsync from 'browser-sync';
 import del from 'del';
 
-const tsProject = tstranspiler.createProject('tsconfig.json');
+const globs = {
+	src: {
+		html: 'src/*.html',
+		images: 'src/img/**/*.+(png|jpg|jpeg|gif|svg)',
+		sass: 'src/scss/**/*.scss',
+		ts: 'src/ts/**/*.ts'
+	},
+	dest: {
+		dirs: {
+			root: 'dist',
+			images: 'dist/img',
+			css: 'dist/css',
+			js: 'dist/js'
+		},
+		html: 'dist/*.html',
+		images: 'dist/img/**/*.+(png|jpg|jpeg|gif|svg)'
+	},
+	css: '**/*.css',
+	js: '**/*.js',
+	tsconfig: 'tsconfig.json'
+};
+
+const tsProject = tstranspiler.createProject(globs.tsconfig);
 const browser = bsync.create();
 
 function html() {
 	// prettier-ignore
-	return src('src/*.html')
-		.pipe(dest('dist'));
+	return src(globs.src.html)
+		.pipe(dest(globs.dest.dirs.root));
 }
 
 function images() {
 	// prettier-ignore
-	return src('src/img/**/*.*')
+	return src(globs.src.images)
 		.pipe(cache(imagemin()))
-		.pipe(dest('dist/img'));
+		.pipe(dest(globs.dest.dirs.images));
 }
 
 function sass() {
 	// prettier-ignore
-	return src('src/scss/**/*.scss')
+	return src(globs.src.sass)
 		.pipe(sourcemaps.init())
 		.pipe(transpilesass())
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest('dist/css'))
-		.pipe(browser.stream({ match: '**/*.css' }));
+		.pipe(dest(globs.dest.dirs.css))
+		.pipe(browser.stream({ match: globs.css }));
 }
 
 function ts() {
@@ -46,12 +68,12 @@ function ts() {
 		.pipe(uglify())
 		.pipe(rename({ extname: '.min.js' }))
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest('dist/js'))
-		.pipe(browser.stream({ match: '**/*.js' }));
+		.pipe(dest(globs.dest.dirs.js))
+		.pipe(browser.stream({ match: globs.js }));
 }
 
 function clean(done: (err?: Error) => void) {
-	del.sync('dist');
+	del.sync(globs.dest.dirs.root);
 	done();
 }
 
@@ -60,7 +82,7 @@ const build = series(clean, parallel(html, images, ts, sass));
 function browserSync() {
 	bsync.init({
 		server: {
-			baseDir: 'dist'
+			baseDir: globs.dest.dirs.root
 		}
 		// files: [ 'dist/*.html', 'dist/**/*.css', 'dist/**/*.js' ]
 	});
@@ -72,12 +94,12 @@ function browserSyncReload(done: (err?: Error) => void) {
 }
 
 function watchImpl(done: (err?: Error) => void) {
-	fwatch('src/ts/**/*.ts', ts);
-	fwatch('src/scss/**/*.scss', sass);
-	fwatch('src/*.html', html);
-	fwatch('src/img/**/*.*', images);
-	fwatch('dist/*.html', browserSyncReload);
-	fwatch('dist/img/**/*.*', browserSyncReload);
+	fwatch(globs.src.ts, ts);
+	fwatch(globs.src.sass, sass);
+	fwatch(globs.src.html, html);
+	fwatch(globs.src.images, images);
+	fwatch(globs.dest.html, browserSyncReload);
+	fwatch(globs.dest.images, browserSyncReload);
 	done();
 }
 
