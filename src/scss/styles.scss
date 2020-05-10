@@ -1,16 +1,16 @@
 * {
+	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
-	box-sizing: border-box;
 }
 
 html {
 	font-family: Helvetica, Arial, sans-serif;
-	text-rendering: optimizeLegibility;
 	font-size: 1rem;
+	text-rendering: optimizeLegibility;
 }
 
 header {
-	background-image: url(../img/background.jpg);
+	background-image: url('../img/background.jpg');
 	height: 100vh;
 }
