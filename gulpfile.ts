@@ -6,6 +6,8 @@ import transpilesass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
 import uglify from 'gulp-uglify';
+import cache from 'gulp-cache';
+import imagemin from 'gulp-imagemin';
 import bsync from 'browser-sync';
 import del from 'del';
 
@@ -18,9 +20,16 @@ function html() {
 		.pipe(dest('dist'));
 }
 
+function images() {
+	// prettier-ignore
+	return src('src/img/**/*.*')
+		.pipe(cache(imagemin()))
+		.pipe(dest('dist/img'));
+}
+
 function sass() {
 	// prettier-ignore
-	return src('src/**/*.scss')
+	return src('src/scss/**/*.scss')
 		.pipe(sourcemaps.init())
 		.pipe(transpilesass())
 		.pipe(sourcemaps.write('.'))
@@ -46,7 +55,7 @@ function clean(done: (err?: Error) => void) {
 	done();
 }
 
-const build = series(clean, parallel(html, ts, sass));
+const build = series(clean, parallel(html, images, ts, sass));
 
 function browserSync() {
 	bsync.init({
@@ -63,14 +72,16 @@ function browserSyncReload(done: (err?: Error) => void) {
 }
 
 function watchImpl(done: (err?: Error) => void) {
-	fwatch('src/**/*.ts', ts);
-	fwatch('src/**/*.scss', sass);
+	fwatch('src/ts/**/*.ts', ts);
+	fwatch('src/scss/**/*.scss', sass);
 	fwatch('src/*.html', html);
+	fwatch('src/img/**/*.*', images);
 	fwatch('dist/*.html', browserSyncReload);
+	fwatch('dist/img/**/*.*', browserSyncReload);
 	done();
 }
 
 const watch = series(build, watchImpl, browserSync);
 
-export { html, sass, ts, clean, build, watch };
+export { html, images, sass, ts, clean, build, watch };
 export default watch;
