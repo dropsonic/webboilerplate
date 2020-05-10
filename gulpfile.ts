@@ -8,6 +8,7 @@ import rename from 'gulp-rename';
 import uglify from 'gulp-uglify';
 import cache from 'gulp-cache';
 import imagemin from 'gulp-imagemin';
+import autoprefixer from 'gulp-autoprefixer';
 import bsync from 'browser-sync';
 import del from 'del';
 
@@ -54,6 +55,7 @@ function sass() {
 	return src(globs.src.sass)
 		.pipe(sourcemaps.init())
 		.pipe(transpilesass())
+		.pipe(autoprefixer())
 		.pipe(sourcemaps.write('.'))
 		.pipe(dest(globs.dest.dirs.css))
 		.pipe(browser.stream({ match: globs.css }));
