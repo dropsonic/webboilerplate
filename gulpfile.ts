@@ -10,6 +10,7 @@ import cache from 'gulp-cache';
 import imagemin from 'gulp-imagemin';
 import autoprefixer from 'gulp-autoprefixer';
 const cleancss = require('gulp-clean-css');
+const sassLint = require('gulp-sass-lint');
 import plumber from 'gulp-plumber';
 import concat from 'gulp-concat';
 import bsync from 'browser-sync';
@@ -57,6 +58,9 @@ function sass() {
 	// prettier-ignore
 	return src(globs.src.sass)
 		.pipe(plumber())
+		.pipe(sassLint())
+		.pipe(sassLint.format())
+		.pipe(sassLint.failOnError())
 		.pipe(sourcemaps.init())
 		.pipe(transpilesass())
 		.pipe(autoprefixer())
