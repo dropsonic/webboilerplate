@@ -1,23 +1,20 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
-import { src, dest, series, parallel, watch as fwatch } from 'gulp';
-import tstranspiler from 'gulp-typescript';
-import transpilesass from 'gulp-sass';
-import sourcemaps from 'gulp-sourcemaps';
-import rename from 'gulp-rename';
-import uglify from 'gulp-uglify';
-import cache from 'gulp-cache';
-import imagemin from 'gulp-imagemin';
-import autoprefixer from 'gulp-autoprefixer';
+const { src, dest, series, parallel, watch: fwatch } = require('gulp');
+const tstranspiler = require('gulp-typescript');
+const transpilesass = require('gulp-sass');
+const sourcemaps = require('gulp-sourcemaps');
+const rename = require('gulp-rename');
+const uglify = require('gulp-uglify');
+const cache = require('gulp-cache');
+const imagemin = require('gulp-imagemin');
+const autoprefixer = require('gulp-autoprefixer');
 const cleancss = require('gulp-clean-css');
 const sassLint = require('gulp-sass-lint');
 const eslint = require('gulp-eslint');
 const htmlhint = require('gulp-htmlhint');
-import plumber from 'gulp-plumber';
-import concat from 'gulp-concat';
-import bsync from 'browser-sync';
-import del from 'del';
+const plumber = require('gulp-plumber');
+const concat = require('gulp-concat');
+const bsync = require('browser-sync');
+const del = require('del');
 
 const globs = {
 	src: {
@@ -96,7 +93,7 @@ function ts() {
 		.pipe(bsync.stream({ match: globs.js }));
 }
 
-function clean(done: (err?: Error) => void) {
+function clean(done) {
 	del.sync(globs.dest.dirs.root);
 	done();
 }
@@ -112,12 +109,12 @@ function browserSync() {
 	});
 }
 
-function browserSyncReload(done: (err?: Error) => void) {
+function browserSyncReload(done) {
 	bsync.reload();
 	done();
 }
 
-function watchImpl(done: (err?: Error) => void) {
+function watchImpl(done) {
 	fwatch(globs.src.ts, ts);
 	fwatch(globs.src.sass, sass);
 	fwatch(globs.src.html, html);
@@ -129,5 +126,10 @@ function watchImpl(done: (err?: Error) => void) {
 
 const watch = series(build, watchImpl, browserSync);
 
-export { html, images, sass, ts, clean, build, watch };
-export default watch;
+exports.html = html;
+exports.images = images;
+exports.sass = sass;
+exports.ts = ts;
+exports.clean = clean;
+exports.build = build;
+exports.default = watch;
