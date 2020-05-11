@@ -132,4 +132,5 @@ exports.sass = sass;
 exports.ts = ts;
 exports.clean = clean;
 exports.build = build;
+exports.watch = watch;
 exports.default = watch;
