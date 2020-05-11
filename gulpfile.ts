@@ -13,6 +13,7 @@ import autoprefixer from 'gulp-autoprefixer';
 const cleancss = require('gulp-clean-css');
 const sassLint = require('gulp-sass-lint');
 const eslint = require('gulp-eslint');
+const htmlhint = require('gulp-htmlhint');
 import plumber from 'gulp-plumber';
 import concat from 'gulp-concat';
 import bsync from 'browser-sync';
@@ -47,6 +48,8 @@ bsync.create();
 function html() {
 	// prettier-ignore
 	return src(globs.src.html)
+		.pipe(htmlhint())
+		.pipe(htmlhint.reporter())
 		.pipe(dest(globs.dest.dirs.root));
 }
 
