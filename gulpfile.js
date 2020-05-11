@@ -15,7 +15,9 @@ const plumber = require('gulp-plumber');
 const concat = require('gulp-concat');
 const bsync = require('browser-sync');
 const del = require('del');
+const path = require('path');
 const slash = require('slash');
+const merge = require('merge-stream');
 
 const globs = {
 	src: {
@@ -37,7 +39,15 @@ const globs = {
 	css: '**/*.css',
 	js: '**/*.js',
 	tsConfig: 'tsconfig.json',
-	sassLintConfig: '.sass-lint.yml'
+	sassLintConfig: '.sass-lint.yml',
+	materializecss: {
+		css: 'materialize-css/dist/css/materialize.min.css',
+		js: 'materialize-css/dist/js/materialize.min.js',
+		nouislider: {
+			css: 'materialize-css/extras/noUiSlider/nouislider.css',
+			js: 'materialize-css/extras/noUiSlider/nouislider.min.js'
+		}
+	}
 };
 
 const tsProject = tstranspiler.createProject(globs.tsConfig);
@@ -57,7 +67,6 @@ function images() {
 		.pipe(cache(imagemin()))
 		.pipe(dest(globs.dest.dirs.images));
 }
-
 function sass() {
 	// prettier-ignore
 	return src(globs.src.sass)
@@ -94,12 +103,26 @@ function ts() {
 		.pipe(bsync.stream({ match: globs.js }));
 }
 
+function vendors() {
+	const resolve = (p) => slash(require.resolve(p));
+	// prettier-ignore
+	return merge(
+		src(resolve(globs.materializecss.css))
+			.pipe(dest(globs.dest.dirs.css)),
+		src(resolve(globs.materializecss.js))
+			.pipe(dest(globs.dest.dirs.js)),
+		src(resolve(globs.materializecss.nouislider.css))
+			.pipe(dest(globs.dest.dirs.css)),
+		src(resolve(globs.materializecss.nouislider.js))
+			.pipe(dest(globs.dest.dirs.js)));
+}
+
 function clean(done) {
 	del.sync(globs.dest.dirs.root);
 	done();
 }
 
-const build = series(clean, parallel(html, images, ts, sass));
+const build = series(clean, parallel(html, vendors, images, ts, sass));
 
 function browserSync() {
 	bsync.init({
@@ -131,6 +154,7 @@ exports.html = html;
 exports.images = images;
 exports.sass = sass;
 exports.ts = ts;
+exports.vendors = vendors;
 exports.clean = clean;
 exports.build = build;
 exports.watch = watch;
