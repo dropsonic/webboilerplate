@@ -15,6 +15,7 @@ const plumber = require('gulp-plumber');
 const concat = require('gulp-concat');
 const bsync = require('browser-sync');
 const del = require('del');
+const slash = require('slash');
 
 const globs = {
 	src: {
@@ -65,7 +66,7 @@ function sass() {
 		.pipe(sassLint.format())
 		.pipe(sassLint.failOnError())
 		.pipe(sourcemaps.init())
-		.pipe(transpilesass({ includePaths: require('scss-resets').includePaths }))
+		.pipe(transpilesass({ includePaths: require('scss-resets').includePaths.map(slash) }))
 		.pipe(autoprefixer())
 		.pipe(cleancss())
 		.pipe(rename({ extname: '.min.css' }))
